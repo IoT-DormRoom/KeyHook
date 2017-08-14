@@ -1,9 +1,10 @@
 #define PIN D7
 #define FSR_PIN A0
 
-int state = 0;
 int fsrReading;
 int fsrThreshold;
+
+bool keyDetected;
 
 int setThreshold(String threshold) {
     fsrThreshold = threshold.toInt();
@@ -13,14 +14,14 @@ int setThreshold(String threshold) {
 void setup() {
     pinMode(PIN, OUTPUT);
     pinMode(FSR_PIN, INPUT);
-    Particle.variable("fsrReading", fsrReading);
-    Particle.variable("fsrThreshold", fsrThreshold);
+
+    Particle.variable("detected", keyDetected);
     Particle.function("Threshold", setThreshold);
     fsrThreshold = 100;
 }
 
 void loop() {
     fsrReading = analogRead(FSR_PIN);
-    digitalWrite(PIN, fsrReading > fsrThreshold ? HIGH : LOW);
-    state = !state;
+    keyDetected = fsrReading > fsrThreshold;
+    digitalWrite(PIN, keyDetected ? HIGH : LOW);
 }
